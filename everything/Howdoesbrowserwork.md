@@ -11,5 +11,5 @@ Trình duyệt sẽ gửi 1 [Request](https://sourcedefense.com/glossary/web-req
 ![image](imgs/step2.JPG)  
 
 ## Step3: Browser Engine đọc HTML code
-![image](imgs/step3.JPG)  
+![image](imgs/Step3.JPG)  
 Kiểm tra trong HTML code có những thành phần gì? link css, code javascript, ảnh, video. Nếu có Browser sẽ load các tài nguyên về và render thành 1 trang web hoàn chỉnh. Trong trường hợp bị thiếu ảnh hoặc tài nguyên thì Browser sẽ hiển thị thiếu.
