@@ -28,7 +28,8 @@ Khi sử dụng phương pháp thứ 2, sẽ có vấn đề phát sinh là: **T
 Có một vài cách để Load balancer phân chia nhiệm request tới các server:
 * **Random**: LB sẽ chọn ngẫu nhiên một server để xử lý 1 request tới.
 * **Round-Robin**: Chia đều mỗi request tới cho mỗi server theo thứ tự và quay vòng. Ví dụ có 3 server: A,B,C. Request 1, A xử lý. 2, B xử lý. 3, C xử lý và 4 lại là A xử lý.   
-* **Fewest Connection**: LB sẽ tìm kiếm server nào hiện tại đang có ít request đang xử lý nhất và chỉ định server đó xử lý request. (Nghe kiểu giống heap quá.) Như vậy sẽ mất thời gian để LB tính toán tìm ra server nào.   
+* **Fewest Connection**: LB sẽ tìm kiếm server nào hiện tại đang có ít request đang xử lý nhất và chỉ định server đó xử lý request. (Nghe kiểu giống heap quá.) Như vậy sẽ mất thời gian để LB tính toán tìm ra server nào.        
+   
 Đọc đến đây tôi cảm thấy LB cứ như cô giáo, và mỗi học sinh là 1 sever tương ứng request ở đây là gọi trả bài. Cô có thể chọn ngẫu nhiên(**Robin**), chọn để thằng nào cũng phải lên bảng số lần như nhau(**round-robin**), hoặc chọn thằng nào ít được lên bảng nhất.(**Fewest**) :))   
 
 Không có phương án nào tốt nhất ở mọi hoàn cảnh. Tùy hoàn cảnh mà chọn phương pháp!   
