@@ -23,7 +23,7 @@ Nếu sử dụng 1 sever đơn lẻ duy nhất, sẽ có giới hạn số lư�
 ## Load Balancing   
 
 Khi sử dụng phương pháp thứ 2, sẽ có vấn đề phát sinh là: **Ta phân chia nhiệm vụ xử lý các request như nào?**. Câu trả lời ở đây là sử dụng [Load Balancer](https://www.nginx.com/resources/glossary/load-balancing/). Một thiết bị phần cứng có trách nhiệm tiếp nhận các imcoming requests và phân phối các request này đến các sever.
-[image](imgs/load_balancer.JPG)   
+![image](imgs/load_balancer.JPG)   
 
 Có một vài cách để Load balancer phân chia nhiệm request tới các server:
 * **Random**: LB sẽ chọn ngẫu nhiên một server để xử lý 1 request tới.
@@ -57,7 +57,7 @@ Ngoài việc mở rộng qui mô máy chủ để sử lý các request đến,
 #### 2.Horizontal Partition: Sử dụng thêm nhiều bảng tương tự với cùng kiểu dữ liệu nhưng khác nhau về thông tin. Việc tìm kiếm thông tin lúc này có thể sẽ dễ dàng hơn.  
 Ví dụ về Horizontal Partition: Bảng dữ liệu học sinh của toàn quốc thì ta có thể chia ra thành 2 hoặc nhiều hơn theo vùng miền. Như vậy khi tìm kiếm 1 học sinh, thay vì phải duyệt toàn bộ học sinh cả nước, ta tìm bảng học sinh đó ở vùng miền nào rồi tìm kiếm bảng đó. -> Tiết kiệm thời gian hơn. 
 
-[image](imgs/horizontal_vertical.png)   
+![image](imgs/horizontal_vertical.png)   
 ---
 
 ## Database Replication 
@@ -65,7 +65,7 @@ Ngay khi ta scale database thì ta vẫn có thể gặp phải vấn đề **Si
 Có nhiều cách triển khai **Database Replication** chẳng hạn như: 
 
 1. Single-Primary Replication: Có nhiều cơ sở dữ liệu, nhưng chỉ 1 trong số chúng là primary database - nghĩa là bạn có thể read, write vào database này. Còn các database khác chỉ phục vụ cho thao tác truy xuất. Khi primary database đươc ghi, các database còn lại cũng được update để đồng bộ hóa thông tin sao cho giống database chính. (Vấn đề lúc này có thể là latency-độ trễ, gửi dữ liệu chưa được update tới client.....). Nhưng cách này vẫn chưa thực sự giải quyết triệt để **Single Point Failure**: một máy chủ chứa database chính, vì 1 lý do nào đó máy chủ này crash, toàn bộ data ở primary database này biến mất, chúng ta vẫn bị mất thông tin do các DB kia chỉ là bản sao.     
-[image](imgs/primary_database.jpg)   
+![image](imgs/primary_database.jpg)   
 ---
 
 
@@ -73,7 +73,7 @@ Có nhiều cách triển khai **Database Replication** chẳng hạn như:
     * Update Conflict
     * Uniqueness Conflict(2 row cùng index nhưng data khác nhau)
     * Delete Conflict(Một user xóa 1 hàng trong khi user khác lại update hàng đó?)....   
-[image](imgs/multi_primary.JPG)
+![image](imgs/multi_primary.JPG)
 
 
 ## Caching 
@@ -87,7 +87,7 @@ Thì tức là host đang nói với browser rằng, trong 86400 miliseconds k�
 
 Đó là caching ở phía client. Caching cũng thường xuyên được sử dụng ở phía server. Lúc này phía backend set up sẽ trông giống kiểu như này. Tất cả các server đều tương tác với cache
 ---
-[image](imgs/caching_sever_side.JPG)   
+![image](imgs/caching_sever_side.JPG)   
 ---
 
 
