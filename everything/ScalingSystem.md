@@ -45,4 +45,50 @@ Một vấn đề nữa đó chính là **session**. Khi user gửi request, LB 
 Là việc tăng, giảm số lượng server để phục vụ các request. 
 ### Sever failure.   
 #### Single Point Failure 
-Là việc mà chỉ vì một phần cứng bị hỏng dẫn tới hoảng toàn bộ hệ thống. Ví dụ nếu scaling theo Vertical- thay server có cấu hình tốt hơn. Thế nhưng khi server crash thì có thể ngưng toàn bộ hệ thống. Ngược lại Horizontal Scaling nếu 1 sever hỏng thì vẫn còn các sever còn lại đón nhận request từ LB. Ngoài ra LB có thể phát hiện server nào bị hỏng thông qua việc nhận tín hiệu **heartbeat** từ server. 
+Là việc mà chỉ vì một phần cứng bị hỏng dẫn tới hoảng toàn bộ hệ thống. Ví dụ nếu scaling theo Vertical- thay server có cấu hình tốt hơn. Thế nhưng khi server crash thì có thể ngưng toàn bộ hệ thống. Ngược lại Horizontal Scaling nếu 1 sever hỏng thì vẫn còn các sever còn lại đón nhận request từ LB. Ngoài ra LB có thể phát hiện server nào bị hỏng thông qua việc nhận tín hiệu **heartbeat** từ server.    
+
+------
+
+
+## Scaling Database
+
+Ngoài việc mở rộng qui mô máy chủ để sử lý các request đến, ta cũng cần mở rộng cơ sở dữ liệu. Khi lượng record, table trở lên lớn theo thời gian, hoặc chúng ta muốn chứa được nhiều dữ liệu hơn lưu trữ không chỉ trên 1 máy chủ mà có thể trên các máy chủ khác. Khi này lại có thể phát sinh thêm nhiều vấn đề như: Database của chúng ta không thể xử lý tất cả các request được gửi đến.   
+#### 1.Vertical Partition: Chia dữ liệu thành nhiều bảng con hơn là sử dụng một bảng to mà chứa nhiều trường thông tin không cần thiết.   
+#### 2.Horizontal Partition: Sử dụng thêm nhiều bảng tương tự với cùng kiểu dữ liệu nhưng khác nhau về thông tin. Việc tìm kiếm thông tin lúc này có thể sẽ dễ dàng hơn.  
+Ví dụ về Horizontal Partition: Bảng dữ liệu học sinh của toàn quốc thì ta có thể chia ra thành 2 hoặc nhiều hơn theo vùng miền. Như vậy khi tìm kiếm 1 học sinh, thay vì phải duyệt toàn bộ học sinh cả nước, ta tìm bảng học sinh đó ở vùng miền nào rồi tìm kiếm bảng đó. -> Tiết kiệm thời gian hơn. 
+
+[image](imgs/horizontal_vertical.png)   
+---
+
+## Database Replication 
+Ngay khi ta scale database thì ta vẫn có thể gặp phải vấn đề **Single Point Failure**. Nếu database của chúng ta crash, có thể ta sẽ bị mất toàn bộ dữ liệu. Nếu ta thêm nhiều máy chủ, mỗi máy chủ lại chứa 1 database là bản sao của database gốc, điều này sẽ giúp ta tránh được vấn đề **Single Point Failure** khi một trong số các host server bị vấn đề.  
+Có nhiều cách triển khai **Database Replication** chẳng hạn như: 
+
+1. Single-Primary Replication: Có nhiều cơ sở dữ liệu, nhưng chỉ 1 trong số chúng là primary database - nghĩa là bạn có thể read, write vào database này. Còn các database khác chỉ phục vụ cho thao tác truy xuất. Khi primary database đươc ghi, các database còn lại cũng được update để đồng bộ hóa thông tin sao cho giống database chính. (Vấn đề lúc này có thể là latency-độ trễ, gửi dữ liệu chưa được update tới client.....). Nhưng cách này vẫn chưa thực sự giải quyết triệt để **Single Point Failure**: một máy chủ chứa database chính, vì 1 lý do nào đó máy chủ này crash, toàn bộ data ở primary database này biến mất, chúng ta vẫn bị mất thông tin do các DB kia chỉ là bản sao.     
+[image](imgs/primary_database.jpg)   
+---
+
+
+2. Multi-Primary Replication: Tất cả các database đều được đọc và ghi, nó giải quyết vấn đề SPF nhưng lại rối rắm ở việc đồng bộ hóa. Sẽ có các xung đột có thể xảy ra: 
+    * Update Conflict
+    * Uniqueness Conflict(2 row cùng index nhưng data khác nhau)
+    * Delete Conflict(Một user xóa 1 hàng trong khi user khác lại update hàng đó?)....   
+[image](imgs/multi_primary.JPG)
+
+
+## Caching 
+Khi hệ thống trở nên to và rộng, database chứa rất nhiều dữ liệu. Việc truy xuất dữ liệu từ database lúc này sẽ tốn kém. Việc giảm thiểu truy xuât tới database càng nhiều càng tốt. Nếu những dữ liệu được truy xuất với tần số lớn, ta có thể lưu nó dưới bộ nhớ tạm. Đây là ý tưởng của CACHING- lưu trữ những thông tin thường xuyên được sử dụng để khỏi phải mất công truy xuất tới database.    
+Caching có thể được triển khai bằng cách lưu giữ dữ liệu ở phía user, khi user reload lại trang web,không request nào cần send tới host. 
+Ví dụ khi HTTP response trả về có chứa thông tin như này    
+```
+Cache-Control: max-age=86400
+```  
+Thì tức là host đang nói với browser rằng, trong 86400 miliseconds kể từ lúc tôi đóng trình duyệt, nếu tôi mở trang web lên lại thì không request nào phải gửi tới sever, thay vào đó sẽ load lại web từ cache.
+
+Đó là caching ở phía client. Caching cũng thường xuyên được sử dụng ở phía server. Lúc này phía backend set up sẽ trông giống kiểu như này. Tất cả các server đều tương tác với cache
+---
+[image](imgs/caching_sever_side.JPG)   
+---
+
+
+
