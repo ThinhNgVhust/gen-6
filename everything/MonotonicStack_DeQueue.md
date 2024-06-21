@@ -84,4 +84,6 @@ Nguồn:
 
 [algo monster](https://algo.monster/problems/mono_stack_intro "algo monster")   
 
-[Minimum stack / Minimum queue](https://cp-algorithms.com/data_structures/stack_queue_modification.html)    
+[Minimum stack / Minimum queue](https://cp-algorithms.com/data_structures/stack_queue_modification.html)  
+
+[Leetcode](https://leetcode.com/problems/sum-of-subarray-minimums/discuss/178876/stack-solution-with-very-detailed-explanation-step-by-step)
